@@ -7,19 +7,7 @@
 
 module challenge::day_04 {
     use std::vector;
-
-    // Copy the Habit struct from day_03
-    public struct Habit has copy, drop {
-        name: vector<u8>,
-        completed: bool,
-    }
-
-    public fun new_habit(name: vector<u8>): Habit {
-        Habit {
-            name,
-            completed: false,
-        }
-    }
+    use std::string::String;
 
     // TODO: Create a struct called 'HabitList' with:
     // - habits: vector<Habit>
@@ -27,11 +15,35 @@ module challenge::day_04 {
     // public struct HabitList has drop {
     //     // Your field here
     // }
+    public struct Habit has copy, drop, store {
+        name: String,
+        completed: bool,
+    }
 
+    public struct HabitList has drop {
+        habits: vector<Habit>,
+    }
     // TODO: Write a function 'empty_list' that returns an empty HabitList
     // public fun empty_list(): HabitList {
     //     // Use vector::empty() to create an empty vector
     // }
+    // Create an empty habit list
+    public fun new_habit(name: String): Habit {
+        Habit {
+            name,
+            completed: false,
+        }
+    }
+    public fun empty_list(): HabitList {
+        HabitList {
+            habits: vector::empty(),
+        }
+    }
+    public fun add_habit(list: &mut HabitList, habit: Habit) {
+        vector::push_back(&mut list.habits, habit);
+    }
+
+
 
     // TODO: Write a function 'add_habit' that takes:
     // - list: &mut HabitList (mutable reference)
@@ -39,6 +51,17 @@ module challenge::day_04 {
     // Use vector::push_back to add the habit
     // public fun add_habit(list: &mut HabitList, habit: Habit) {
     //     // Your code here
+ 
     // }
+    #[test]
+    fun test_habit_list() {
+        use std::string;
+        
+        let mut my_list = empty_list();
+        let habit1 = new_habit(string::utf8(b"Give Input Sui Degen"));
+        
+        add_habit(&mut my_list, habit1);
+        
+        assert!(my_list.habits.length() == 1, 0);
+    }
 }
-
